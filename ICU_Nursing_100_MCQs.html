@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICU Nursing Practice Exam — 100 MCQs</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+  }
+  .container {
+    max-width: 950px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, #0f4c81 0%, #1976d2 100%);
+    color: #fff;
+    padding: 28px;
+    text-align: center;
+  }
+  header h1 { font-size: 26px; margin-bottom: 6px; }
+  header p { opacity: 0.9; font-size: 14px; }
+  .filter-bar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 16px;
+    background: #f5f7fa;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .filter-btn {
+    background: #fff;
+    border: 2px solid #1976d2;
+    color: #1976d2;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .filter-btn:hover { background: #e3f2fd; }
+  .filter-btn.active {
+    background: #1976d2;
+    color: #fff;
+  }
+  .progress-bar {
+    height: 6px;
+    background: #e0e0e0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 16px;
+    background: #f5f7fa;
+    border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .stat { text-align: center; min-width: 70px; }
+  .stat-num {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1976d2;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat.correct .stat-num { color: #4caf50; }
+  .stat.incorrect .stat-num { color: #f44336; }
+  .questions { padding: 22px; }
+  .question {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 18px;
+    transition: box-shadow 0.2s;
+  }
+  .question.hidden { display: none; }
+  .question:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .q-num {
+    background: #1976d2;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .q-category {
+    background: #e3f2fd;
+    color: #1565c0;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .q-text {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+    color: #222;
+  }
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .option {
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+    color: #333;
+  }
+  .option:hover:not(:disabled) {
+    border-color: #1976d2;
+    background: #f3f8ff;
+  }
+  .option:disabled { cursor: not-allowed; }
+  .option-letter {
+    background: #f0f0f0;
+    color: #555;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .option.correct, .option.disabled-correct {
+    border-color: #4caf50;
+    background: #e8f5e9;
+  }
+  .option.correct .option-letter,
+  .option.disabled-correct .option-letter {
+    background: #4caf50;
+    color: #fff;
+  }
+  .option.incorrect {
+    border-color: #f44336;
+    background: #ffebee;
+  }
+  .option.incorrect .option-letter {
+    background: #f44336;
+    color: #fff;
+  }
+  .rationale {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    border-radius: 4px;
+    display: none;
+    animation: slideIn 0.3s ease;
+  }
+  .rationale.show { display: block; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .rationale-label {
+    font-weight: 700;
+    color: #f57c00;
+    margin-bottom: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .rationale-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #444;
+  }
+  .actions {
+    padding: 18px 25px 26px;
+    text-align: center;
+    border-top: 1px solid #e0e0e0;
+    background: #fafafa;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+    font-family: inherit;
+  }
+  .btn:hover { background: #1565c0; }
+  .btn.secondary { background: #757575; }
+  .btn.secondary:hover { background: #616161; }
+  footer {
+    text-align: center;
+    padding: 14px;
+    color: #999;
+    font-size: 12px;
+    background: #f5f7fa;
+  }
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    display: none;
+  }
+  .empty.show { display: block; }
+  @media (max-width: 600px) {
+    header h1 { font-size: 20px; }
+    .q-text { font-size: 14px; }
+    .option { font-size: 13px; padding: 10px 12px; }
+    .filter-btn { font-size: 12px; padding: 6px 12px; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏥 ICU Nursing Practice Exam</h1>
+      <p>100 Questions • Click any answer to see immediate feedback</p>
+    </header>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="filterQuestions('all')">All (100)</button>
+      <button class="filter-btn" data-filter="ABG" onclick="filterQuestions('ABG')">ABG (25)</button>
+      <button class="filter-btn" data-filter="GCS" onclick="filterQuestions('GCS')">GCS (25)</button>
+      <button class="filter-btn" data-filter="Arrhythmias" onclick="filterQuestions('Arrhythmias')">Arrhythmias (25)</button>
+      <button class="filter-btn" data-filter="IV Therapy" onclick="filterQuestions('IV Therapy')">IV Therapy (25)</button>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" id="answeredCount">0</div>
+        <div class="stat-label">Answered</div>
+      </div>
+      <div class="stat correct">
+        <div class="stat-num" id="correctCount">0</div>
+        <div class="stat-label">Correct</div>
+      </div>
+      <div class="stat incorrect">
+        <div class="stat-num" id="incorrectCount">0</div>
+        <div class="stat-label">Incorrect</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="scorePct">—</div>
+        <div class="stat-label">Score</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="totalDisplay">100</div>
+        <div class="stat-label">Total</div>
+      </div>
+    </div>
+
+    <div class="questions" id="questionsContainer"></div>
+    <div class="empty" id="emptyState">No questions in this category.</div>
+
+    <div class="actions">
+      <button class="btn" onclick="resetExam()">🔄 Reset All</button>
+      <button class="btn secondary" onclick="scrollToTop()">⬆ Top</button>
+    </div>
+
+    <footer>ICU Nursing Practice • 100 MCQs across ABG, GCS, Arrhythmias, IV Therapy</footer>
+  </div>
+
+<script>
+const questions = [
+  // ============ ABG (25 Questions) ============
+  {
+    category: "ABG",
+    question: "A patient has the following ABG: pH 7.28, PaCO₂ 58 mmHg, HCO₃⁻ 26 mEq/L. The interpretation is:",
+    options: ["Uncompensated metabolic acidosis", "Uncompensated respiratory acidosis", "Partially compensated respiratory alkalosis", "Fully compensated metabolic acidosis"],
+    correct: 1,
+    rationale: "pH is low (acidosis), PaCO₂ is elevated (respiratory cause), and HCO₃⁻ is normal (22–26), indicating no compensation."
+  },
+  {
+    category: "ABG",
+    question: "A DKA patient has ABG: pH 7.25, PaCO₂ 28 mmHg, HCO₃⁻ 14 mEq/L. This represents:",
+    options: ["Uncompensated metabolic acidosis", "Partially compensated metabolic acidosis", "Mixed respiratory and metabolic acidosis", "Compensated respiratory alkalosis"],
+    correct: 1,
+    rationale: "Low pH with low HCO₃⁻ = metabolic acidosis. Low PaCO₂ shows lung compensation (Kussmaul respirations), but pH still abnormal = partial compensation."
+  },
+  {
+    category: "ABG",
+    question: "Normal PaO₂ on room air is:",
+    options: ["35–45 mmHg", "60–75 mmHg", "80–100 mmHg", "100–120 mmHg"],
+    correct: 2,
+    rationale: "Normal PaO₂ on room air is 80–100 mmHg. Below 60 mmHg requires urgent intervention."
+  },
+  {
+    category: "ABG",
+    question: "The normal range for arterial pH is:",
+    options: ["7.25–7.35", "7.35–7.45", "7.45–7.55", "7.30–7.50"],
+    correct: 1,
+    rationale: "Normal arterial pH is 7.35–7.45. Below 7.35 is acidemia; above 7.45 is alkalemia."
+  },
+  {
+    category: "ABG",
+    question: "Normal PaCO₂ range is:",
+    options: ["25–35 mmHg", "35–45 mmHg", "45–55 mmHg", "55–65 mmHg"],
+    correct: 1,
+    rationale: "Normal PaCO₂ is 35–45 mmHg. It is the respiratory component of acid-base balance."
+  },
+  {
+    category: "ABG",
+    question: "Normal HCO₃⁻ (bicarbonate) range is:",
+    options: ["18–22 mEq/L", "22–26 mEq/L", "26–30 mEq/L", "30–34 mEq/L"],
+    correct: 1,
+    rationale: "Normal HCO₃⁻ is 22–26 mEq/L. It reflects the metabolic component of acid-base balance."
+  },
+  {
+    category: "ABG",
+    question: "A patient has pH 7.50, PaCO₂ 28 mmHg, HCO₃⁻ 24 mEq/L. The interpretation is:",
+    options: ["Uncompensated respiratory alkalosis", "Uncompensated metabolic alkalosis", "Partially compensated respiratory alkalosis", "Mixed alkalosis"],
+    correct: 0,
+    rationale: "High pH (alkalosis) + low PaCO₂ (respiratory cause) + normal HCO₃⁻ = uncompensated respiratory alkalosis. Often seen in anxiety/hyperventilation."
+  },
+  {
+    category: "ABG",
+    question: "A post-op patient with prolonged vomiting has pH 7.52, PaCO₂ 44 mmHg, HCO₃⁻ 34 mEq/L. This is:",
+    options: ["Respiratory alkalosis", "Metabolic alkalosis", "Respiratory acidosis", "Metabolic acidosis"],
+    correct: 1,
+    rationale: "High pH + high HCO₃⁻ + normal PaCO₂ = uncompensated metabolic alkalosis. Loss of gastric HCl from vomiting is a classic cause."
+  },
+  {
+    category: "ABG",
+    question: "Which condition is most likely to cause respiratory acidosis?",
+    options: ["Anxiety attack", "Severe pneumonia with hypoventilation", "Diarrhea", "Diuretic overuse"],
+    correct: 1,
+    rationale: "Hypoventilation from any cause (COPD, pneumonia, sedation, neuromuscular weakness) retains CO₂, causing respiratory acidosis."
+  },
+  {
+    category: "ABG",
+    question: "Which is a common cause of metabolic acidosis?",
+    options: ["Vomiting", "NG suction", "Diarrhea", "Hyperventilation"],
+    correct: 2,
+    rationale: "Diarrhea causes loss of bicarbonate, leading to metabolic acidosis. Vomiting/NG suction cause metabolic alkalosis."
+  },
+  {
+    category: "ABG",
+    question: "A pH of 7.10 indicates:",
+    options: ["Mild acidemia", "Severe acidemia", "Mild alkalemia", "Severe alkalemia"],
+    correct: 1,
+    rationale: "pH < 7.20 is severe acidemia and is life-threatening, requiring urgent intervention."
+  },
+  {
+    category: "ABG",
+    question: "A COPD patient has pH 7.36, PaCO₂ 60 mmHg, HCO₃⁻ 34 mEq/L. This is:",
+    options: ["Uncompensated respiratory acidosis", "Fully compensated respiratory acidosis", "Metabolic alkalosis", "Mixed acid-base disorder"],
+    correct: 1,
+    rationale: "pH is normal but PaCO₂ and HCO₃⁻ are both abnormal in opposing directions — fully compensated respiratory acidosis. Common in chronic COPD."
+  },
+  {
+    category: "ABG",
+    question: "Allen's test is performed before ABG sampling to:",
+    options: ["Confirm patient identity", "Check ulnar artery collateral circulation", "Measure blood pressure", "Test for clotting disorders"],
+    correct: 1,
+    rationale: "Allen's test verifies adequate ulnar artery collateral circulation before radial artery puncture, in case of radial artery damage."
+  },
+  {
+    category: "ABG",
+    question: "After obtaining an ABG sample, the most important nursing action is:",
+    options: ["Apply firm pressure for at least 5 minutes", "Place sample in warm water", "Massage the puncture site", "Inject sample with heparin"],
+    correct: 0,
+    rationale: "Firm pressure for at least 5 minutes (longer for anticoagulated patients) prevents hematoma. The sample should be on ice if not analyzed immediately."
+  },
+  {
+    category: "ABG",
+    question: "Normal SaO₂ (arterial oxygen saturation) is:",
+    options: ["75–85%", "85–92%", "95–100%", "100% only"],
+    correct: 2,
+    rationale: "Normal SaO₂ is 95–100%. Below 90% indicates significant hypoxemia."
+  },
+  {
+    category: "ABG",
+    question: "A patient on a ventilator has pH 7.55, PaCO₂ 25 mmHg, HCO₃⁻ 24 mEq/L. The most appropriate action is:",
+    options: ["Increase respiratory rate", "Decrease respiratory rate or tidal volume", "Increase FiO₂", "No change needed"],
+    correct: 1,
+    rationale: "The patient has respiratory alkalosis from over-ventilation. Decreasing the rate or tidal volume will allow CO₂ to rise toward normal."
+  },
+  {
+    category: "ABG",
+    question: "A patient with acute aspirin overdose may initially present with:",
+    options: ["Metabolic acidosis only", "Respiratory acidosis only", "Respiratory alkalosis followed by metabolic acidosis", "Metabolic alkalosis"],
+    correct: 2,
+    rationale: "Aspirin toxicity initially stimulates the respiratory center (respiratory alkalosis), then causes metabolic acidosis from accumulation of organic acids."
+  },
+  {
+    category: "ABG",
+    question: "PaO₂ of 55 mmHg is best described as:",
+    options: ["Normal", "Mild hypoxemia", "Moderate hypoxemia", "Severe hypoxemia"],
+    correct: 3,
+    rationale: "PaO₂ < 60 mmHg = severe hypoxemia requiring urgent oxygen therapy. Mild = 60–79, moderate = 40–59 (some references), severe < 40."
+  },
+  {
+    category: "ABG",
+    question: "Which finding indicates the kidneys are compensating for respiratory acidosis?",
+    options: ["Decreased HCO₃⁻", "Increased HCO₃⁻", "Decreased PaCO₂", "Increased PaCO₂"],
+    correct: 1,
+    rationale: "Renal compensation for respiratory acidosis = retaining bicarbonate, which raises HCO₃⁻ to buffer the acidosis. Takes 2–3 days."
+  },
+  {
+    category: "ABG",
+    question: "A patient with sepsis and lactic acidosis would most likely have:",
+    options: ["High pH, low HCO₃⁻", "Low pH, low HCO₃⁻", "Low pH, high HCO₃⁻", "High pH, high HCO₃⁻"],
+    correct: 1,
+    rationale: "Lactic acidosis is a metabolic acidosis: low pH and low HCO₃⁻ (consumed buffering acid). Common in sepsis, shock, and tissue hypoperfusion."
+  },
+  {
+    category: "ABG",
+    question: "Which patient is at highest risk for respiratory acidosis?",
+    options: ["A patient hyperventilating from anxiety", "A patient with COPD exacerbation", "A patient with diarrhea", "A patient on diuretics"],
+    correct: 1,
+    rationale: "COPD patients chronically retain CO₂; an exacerbation worsens hypoventilation, leading to respiratory acidosis."
+  },
+  {
+    category: "ABG",
+    question: "The first step in ABG interpretation is:",
+    options: ["Look at the HCO₃⁻", "Look at the PaCO₂", "Look at the pH", "Look at the PaO₂"],
+    correct: 2,
+    rationale: "Always start with pH to determine acidemia vs alkalemia, then evaluate PaCO₂ and HCO₃⁻ to identify the cause and compensation."
+  },
+  {
+    category: "ABG",
+    question: "An ABG sample should ideally be analyzed:",
+    options: ["Within 15 minutes of collection", "Within 1 hour at room temperature", "Within 4 hours", "Whenever the lab is available"],
+    correct: 0,
+    rationale: "ABG samples should be analyzed within 15 minutes; if delayed, place on ice to slow cell metabolism that alters values."
+  },
+  {
+    category: "ABG",
+    question: "A pH of 7.55 with PaCO₂ 30 mmHg and HCO₃⁻ 30 mEq/L indicates:",
+    options: ["Pure respiratory alkalosis", "Pure metabolic alkalosis", "Mixed alkalosis (respiratory + metabolic)", "Respiratory acidosis"],
+    correct: 2,
+    rationale: "Both PaCO₂ is low (respiratory alkalosis) AND HCO₃⁻ is high (metabolic alkalosis), with markedly elevated pH = mixed alkalosis."
+  },
+  {
+    category: "ABG",
+    question: "Base excess (BE) reflects:",
+    options: ["The respiratory component", "The metabolic component", "Oxygenation status", "Hemoglobin saturation"],
+    correct: 1,
+    rationale: "Base excess reflects the metabolic (non-respiratory) component of acid-base balance. Normal range is −2 to +2 mEq/L."
+  },
+
+  // ============ GCS (25 Questions) ============
+  {
+    category: "GCS",
+    question: "A patient opens eyes to pain, makes incomprehensible sounds, and withdraws from pain. The GCS score is:",
+    options: ["6", "7", "8", "9"],
+    correct: 2,
+    rationale: "Eye opening to pain (2) + Incomprehensible sounds (2) + Withdrawal from pain (4) = 8. GCS ≤ 8 typically warrants intubation."
+  },
+  {
+    category: "GCS",
+    question: "A GCS score of 9–12 indicates:",
+    options: ["Mild brain injury", "Moderate brain injury", "Severe brain injury", "Brain death"],
+    correct: 1,
+    rationale: "GCS classification: Mild = 13–15, Moderate = 9–12, Severe = 3–8."
+  },
+  {
+    category: "GCS",
+    question: "The best motor response in GCS scores:",
+    options: ["Localizes to pain (5)", "Withdraws from pain (4)", "Obeys commands (6)", "Abnormal flexion (3)"],
+    correct: 2,
+    rationale: "Obeying commands = 6 (highest). Localizes (5) > Withdraws (4) > Abnormal flexion/decorticate (3) > Abnormal extension/decerebrate (2) > None (1)."
+  },
+  {
+    category: "GCS",
+    question: "The maximum (best) GCS score is:",
+    options: ["10", "12", "15", "20"],
+    correct: 2,
+    rationale: "Maximum GCS = 15 (Eye 4 + Verbal 5 + Motor 6). Minimum = 3."
+  },
+  {
+    category: "GCS",
+    question: "The minimum (worst) GCS score is:",
+    options: ["0", "1", "3", "5"],
+    correct: 2,
+    rationale: "Minimum GCS = 3 (Eye 1 + Verbal 1 + Motor 1). There is no zero — every component scores at least 1."
+  },
+  {
+    category: "GCS",
+    question: "A patient who opens eyes spontaneously, is confused but converses, and obeys commands has a GCS of:",
+    options: ["12", "13", "14", "15"],
+    correct: 2,
+    rationale: "Eye spontaneous (4) + Confused conversation (4) + Obeys commands (6) = 14."
+  },
+  {
+    category: "GCS",
+    question: "Decerebrate (abnormal extension) posturing scores what for motor response?",
+    options: ["1", "2", "3", "4"],
+    correct: 1,
+    rationale: "Decerebrate (abnormal extension) = 2. It indicates brainstem damage and is more severe than decorticate (3)."
+  },
+  {
+    category: "GCS",
+    question: "A patient with no eye opening, no verbal response, and abnormal flexion to pain has GCS of:",
+    options: ["3", "4", "5", "6"],
+    correct: 2,
+    rationale: "Eye none (1) + Verbal none (1) + Abnormal flexion/decorticate (3) = 5."
+  },
+  {
+    category: "GCS",
+    question: "A GCS of 8 or less typically indicates the need for:",
+    options: ["Discharge", "Endotracheal intubation", "Oral intake of medications", "Ambulation"],
+    correct: 1,
+    rationale: "Patients with GCS ≤ 8 cannot reliably protect their airway and usually require intubation."
+  },
+  {
+    category: "GCS",
+    question: "An intubated patient cannot be assessed verbally. How is the verbal score documented?",
+    options: ["1", "5", "T (for tube)", "Not scored"],
+    correct: 2,
+    rationale: "For intubated patients, verbal is recorded as 'T' (tube). Total may be written as e.g. 'GCS 10T'."
+  },
+  {
+    category: "GCS",
+    question: "Eye opening to verbal command scores:",
+    options: ["1", "2", "3", "4"],
+    correct: 2,
+    rationale: "Eye opening: Spontaneous = 4, To voice = 3, To pain = 2, None = 1."
+  },
+  {
+    category: "GCS",
+    question: "A patient who responds to questions with inappropriate words scores what for verbal?",
+    options: ["2", "3", "4", "5"],
+    correct: 1,
+    rationale: "Verbal: Oriented = 5, Confused conversation = 4, Inappropriate words = 3, Incomprehensible sounds = 2, None = 1."
+  },
+  {
+    category: "GCS",
+    question: "Which GCS score change should be reported immediately?",
+    options: ["Increase of 1 point", "Drop of 2 or more points", "Same score for 24 hours", "Score of 15"],
+    correct: 1,
+    rationale: "A drop of ≥2 points indicates neurological deterioration and must be reported immediately as it may signal worsening intracranial pressure or bleeding."
+  },
+  {
+    category: "GCS",
+    question: "A patient localizes to pain. The motor score is:",
+    options: ["3", "4", "5", "6"],
+    correct: 2,
+    rationale: "Localizing = 5 (purposeful movement toward the painful stimulus). Withdrawal = 4 (pulls away non-purposefully)."
+  },
+  {
+    category: "GCS",
+    question: "Which is NOT a component of the GCS?",
+    options: ["Eye opening", "Pupil reactivity", "Verbal response", "Motor response"],
+    correct: 1,
+    rationale: "GCS has only 3 components: Eye, Verbal, Motor. Pupil reactivity is a separate neurological assessment, though often documented alongside."
+  },
+  {
+    category: "GCS",
+    question: "An appropriate stimulus to assess motor response in an unresponsive patient is:",
+    options: ["Shaking the patient", "Trapezius pinch or supraorbital pressure", "Slapping the face", "Loud verbal command only"],
+    correct: 1,
+    rationale: "Central painful stimuli (trapezius pinch, supraorbital pressure, sternal rub) are appropriate. Avoid peripheral stimuli only, which can give misleading reflex responses."
+  },
+  {
+    category: "GCS",
+    question: "A patient with GCS 15 means:",
+    options: ["Brain dead", "Fully alert and oriented", "Severe head injury", "Comatose"],
+    correct: 1,
+    rationale: "GCS 15 = fully awake, oriented, follows commands. This is a normal neurological state."
+  },
+  {
+    category: "GCS",
+    question: "The GCS was originally developed to assess:",
+    options: ["Stroke severity", "Traumatic brain injury and level of consciousness", "Mental health status", "Pain levels"],
+    correct: 1,
+    rationale: "GCS was developed by Teasdale and Jennett (1974) at Glasgow to assess head injury and depth of coma. It is now used broadly for any altered consciousness."
+  },
+  {
+    category: "GCS",
+    question: "A patient with periorbital swelling who cannot open eyes is documented as:",
+    options: ["E1", "E2", "E (closed by swelling)", "E4"],
+    correct: 2,
+    rationale: "If eyes cannot be assessed (e.g., swollen shut, bandaged), document 'C' or 'NT' (not testable). Don't assume score of 1."
+  },
+  {
+    category: "GCS",
+    question: "Decorticate posturing (abnormal flexion) scores:",
+    options: ["2", "3", "4", "5"],
+    correct: 1,
+    rationale: "Decorticate (abnormal flexion, arms flexed toward chest) = 3. It indicates damage above the brainstem."
+  },
+  {
+    category: "GCS",
+    question: "A trauma patient: eyes open to pain, no verbal response, extends to pain. GCS is:",
+    options: ["4", "5", "6", "7"],
+    correct: 1,
+    rationale: "Eye to pain (2) + No verbal (1) + Extension/decerebrate (2) = 5."
+  },
+  {
+    category: "GCS",
+    question: "Which finding suggests severe head injury?",
+    options: ["GCS 14", "GCS 12", "GCS 10", "GCS 7"],
+    correct: 3,
+    rationale: "GCS ≤ 8 = severe head injury. Of the choices, only 7 falls in this range."
+  },
+  {
+    category: "GCS",
+    question: "GCS should be assessed in head injury patients:",
+    options: ["Once on admission", "Only if symptoms appear", "Serially at regular intervals", "Daily"],
+    correct: 2,
+    rationale: "Serial GCS assessments (often hourly initially) detect deterioration early. Trend matters more than a single score."
+  },
+  {
+    category: "GCS",
+    question: "A patient who answers questions but is disoriented to time and place scores what verbally?",
+    options: ["2", "3", "4", "5"],
+    correct: 2,
+    rationale: "Confused conversation (responds but disoriented) = 4. Oriented = 5; inappropriate words = 3."
+  },
+  {
+    category: "GCS",
+    question: "When pupillary response is abnormal in a patient with declining GCS, the nurse should suspect:",
+    options: ["Hypoglycemia", "Increased intracranial pressure / herniation", "Anxiety", "Dehydration"],
+    correct: 1,
+    rationale: "Declining GCS + pupillary changes (especially unilateral dilation) suggests increasing ICP and possible herniation — a neurosurgical emergency."
+  },
+
+  // ============ ARRHYTHMIAS (25 Questions) ============
+  {
+    category: "Arrhythmias",
+    question: "A monitored patient has wide QRS tachycardia at 180 bpm, BP 110/70, alert. The most appropriate first action is:",
+    options: ["Unsynchronized defibrillation", "Synchronized cardioversion", "IV amiodarone as ordered", "Begin chest compressions"],
+    correct: 2,
+    rationale: "Stable VT (pulse + stable BP) is treated with antiarrhythmics like amiodarone. Defibrillation is for pulseless VT/VF; cardioversion for unstable VT."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Which rhythm requires immediate unsynchronized defibrillation?",
+    options: ["AFib with RVR", "Stable SVT", "Ventricular fibrillation", "Sinus tachycardia"],
+    correct: 2,
+    rationale: "VF is pulseless and chaotic with no organized QRS — synchronization isn't possible. Immediate defibrillation + CPR is required."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Which rhythm has 'sawtooth' P waves?",
+    options: ["Atrial fibrillation", "Atrial flutter", "Sinus bradycardia", "Ventricular tachycardia"],
+    correct: 1,
+    rationale: "Atrial flutter shows characteristic sawtooth flutter waves, usually at atrial rates of 250–350 bpm."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Atrial fibrillation is characterized by:",
+    options: ["Regular rhythm with P waves before each QRS", "Irregularly irregular rhythm with no discernible P waves", "Wide bizarre QRS complexes", "Sawtooth baseline"],
+    correct: 1,
+    rationale: "AFib = irregularly irregular ventricular response, no identifiable P waves, chaotic atrial baseline."
+  },
+  {
+    category: "Arrhythmias",
+    question: "A patient with AFib is at greatest risk for:",
+    options: ["Pulmonary embolism", "Stroke from atrial thrombus", "Hypoglycemia", "GI bleeding from the rhythm itself"],
+    correct: 1,
+    rationale: "Stagnant blood in fibrillating atria forms thrombi that can embolize to the brain, causing stroke. Anticoagulation is key."
+  },
+  {
+    category: "Arrhythmias",
+    question: "The normal PR interval is:",
+    options: ["0.04–0.08 seconds", "0.12–0.20 seconds", "0.20–0.30 seconds", "0.30–0.40 seconds"],
+    correct: 1,
+    rationale: "Normal PR interval = 0.12–0.20 sec (3–5 small boxes). Prolonged > 0.20 sec = first-degree AV block."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Normal QRS complex duration is:",
+    options: ["< 0.04 seconds", "< 0.08 seconds", "< 0.12 seconds", "< 0.20 seconds"],
+    correct: 2,
+    rationale: "Normal QRS < 0.12 sec (less than 3 small boxes). Wider QRS suggests bundle branch block or ventricular origin."
+  },
+  {
+    category: "Arrhythmias",
+    question: "First-degree AV block is defined as:",
+    options: ["PR interval > 0.20 seconds, all P waves conducted", "Some P waves not conducted", "Complete dissociation between P and QRS", "Wide QRS complexes"],
+    correct: 0,
+    rationale: "First-degree AV block: PR > 0.20 sec, but every P wave is followed by a QRS. Usually benign and asymptomatic."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Third-degree (complete) heart block requires:",
+    options: ["Observation only", "Aspirin administration", "Pacemaker (often urgent transcutaneous pacing first)", "Cardioversion"],
+    correct: 2,
+    rationale: "Complete AV block: P waves and QRS independent. Often symptomatic with bradycardia → requires pacing (transcutaneous, then permanent)."
+  },
+  {
+    category: "Arrhythmias",
+    question: "The first-line drug for symptomatic bradycardia is:",
+    options: ["Adenosine", "Atropine 1 mg IV", "Amiodarone", "Lidocaine"],
+    correct: 1,
+    rationale: "Per ACLS, atropine 1 mg IV (may repeat to max 3 mg) is the first-line drug for symptomatic bradycardia. If ineffective, transcutaneous pacing or epinephrine/dopamine infusion."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Adenosine is the drug of choice for:",
+    options: ["Stable narrow-complex SVT", "Ventricular fibrillation", "Asystole", "Atrial fibrillation with RVR"],
+    correct: 0,
+    rationale: "Adenosine 6 mg rapid IV push (then 12 mg if needed) terminates stable narrow-complex SVT by transient AV block."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Which rhythm shows no electrical activity (a flat line)?",
+    options: ["VFib", "Asystole", "PEA", "Idioventricular rhythm"],
+    correct: 1,
+    rationale: "Asystole = absent electrical activity. Always confirm in 2 leads and check lead/equipment before treating. Treated with CPR + epinephrine, NOT shock."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Pulseless electrical activity (PEA) is treated with:",
+    options: ["Defibrillation", "CPR + epinephrine + identify reversible causes (Hs and Ts)", "Synchronized cardioversion", "Atropine only"],
+    correct: 1,
+    rationale: "PEA shows organized rhythm but no pulse. Treatment: high-quality CPR, epinephrine 1 mg q3–5 min, and search for reversible causes (Hs and Ts)."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Which is a reversible cause of cardiac arrest (the 'Hs and Ts')?",
+    options: ["Hypertension", "Hypovolemia", "Hyperlipidemia", "Hyperthyroidism"],
+    correct: 1,
+    rationale: "Hs: Hypovolemia, Hypoxia, Hydrogen ion (acidosis), Hypo/hyperkalemia, Hypothermia. Ts: Tension pneumothorax, Tamponade, Toxins, Thrombosis (PE/MI)."
+  },
+  {
+    category: "Arrhythmias",
+    question: "A heart rate < 60 bpm in an adult is:",
+    options: ["Tachycardia", "Bradycardia", "Normal sinus rhythm", "Asystole"],
+    correct: 1,
+    rationale: "HR < 60 = bradycardia. May be normal in athletes; treat only if symptomatic (hypotension, altered mental status, chest pain)."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Sinus tachycardia is defined as:",
+    options: ["HR > 100 with normal P-QRS-T pattern", "HR > 150 with no P waves", "HR < 60 with normal P waves", "Irregular rhythm > 100"],
+    correct: 0,
+    rationale: "Sinus tachycardia: HR > 100, with P wave before each QRS, normal pattern. Treat the underlying cause (pain, fever, hypovolemia, anxiety)."
+  },
+  {
+    category: "Arrhythmias",
+    question: "The 'lub-dub' heart sounds correspond to:",
+    options: ["P waves and T waves", "Closure of AV valves (S1) and semilunar valves (S2)", "Atrial contraction only", "Ventricular repolarization"],
+    correct: 1,
+    rationale: "S1 (lub) = AV valves closing at start of systole. S2 (dub) = semilunar (aortic/pulmonic) valves closing at start of diastole."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Premature ventricular contractions (PVCs) appear as:",
+    options: ["Narrow QRS with P wave", "Wide bizarre QRS with no preceding P wave", "Sawtooth waves", "Flat line"],
+    correct: 1,
+    rationale: "PVCs: wide (>0.12s), bizarre QRS without preceding P wave, often followed by compensatory pause. >6/min, multifocal, or in runs are concerning."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Torsades de pointes is a form of polymorphic VT often caused by:",
+    options: ["Hyperkalemia", "Prolonged QT interval", "Short PR interval", "Wide P waves"],
+    correct: 1,
+    rationale: "Torsades de pointes occurs with prolonged QT (drugs, hypomagnesemia, hypokalemia). Treatment: IV magnesium sulfate."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Synchronized cardioversion timing is set to deliver shock during:",
+    options: ["The P wave", "The QRS complex (R wave)", "The T wave", "The PR interval"],
+    correct: 1,
+    rationale: "The defibrillator synchronizes with the R wave to avoid the vulnerable T wave (which could induce VF — 'R-on-T phenomenon')."
+  },
+  {
+    category: "Arrhythmias",
+    question: "A patient in cardiac arrest with VFib should receive defibrillation at:",
+    options: ["50 J", "100 J", "200 J biphasic (or per device)", "500 J"],
+    correct: 2,
+    rationale: "Biphasic defibrillators: 120–200 J initially (per manufacturer). Monophasic: 360 J. Follow your device's recommendation."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Which lab abnormality most commonly causes peaked T waves?",
+    options: ["Hypokalemia", "Hyperkalemia", "Hypocalcemia", "Hypernatremia"],
+    correct: 1,
+    rationale: "Hyperkalemia → tall peaked T waves, then widened QRS, then sine wave, then VF/asystole. Treat urgently with calcium, insulin/glucose, etc."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Hypokalemia on ECG typically shows:",
+    options: ["Tall peaked T waves", "Flattened T waves and U waves", "Wide QRS", "Sawtooth baseline"],
+    correct: 1,
+    rationale: "Hypokalemia: flat or inverted T waves, prominent U waves, ST depression, prolonged QT. Risk of ventricular arrhythmias."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Which artery supplies the SA node in most people?",
+    options: ["Left anterior descending", "Right coronary artery", "Left circumflex", "Posterior descending"],
+    correct: 1,
+    rationale: "The SA node is supplied by the right coronary artery in ~60% of people. Inferior MI (RCA) often causes bradyarrhythmias."
+  },
+  {
+    category: "Arrhythmias",
+    question: "Mobitz Type II second-degree AV block is concerning because:",
+    options: ["It always resolves spontaneously", "It can progress to complete heart block", "It only occurs in young athletes", "It causes tachycardia"],
+    correct: 1,
+    rationale: "Mobitz II (intermittent dropped QRS without PR prolongation) often progresses to third-degree block and typically requires pacing."
+  },
+
+  // ============ IV THERAPY (25 Questions) ============
+  {
+    category: "IV Therapy",
+    question: "Maximum recommended peripheral KCl infusion rate is:",
+    options: ["1–5 mEq/hour", "10–20 mEq/hour", "30–40 mEq/hour", "Bolus is acceptable"],
+    correct: 1,
+    rationale: "Peripheral KCl: max 10 mEq/hour (some refs allow up to 20). Central line with cardiac monitoring may go higher. NEVER IV push — fatal."
+  },
+  {
+    category: "IV Therapy",
+    question: "Signs of phlebitis include:",
+    options: ["Cool, pale skin", "Redness, warmth, swelling, palpable cord along the vein", "Fluid leaking from site", "Hematoma at site"],
+    correct: 1,
+    rationale: "Phlebitis: redness, warmth, swelling, pain, palpable cord. First action: stop infusion, remove catheter, restart elsewhere."
+  },
+  {
+    category: "IV Therapy",
+    question: "IV infiltration is best described as:",
+    options: ["Inflammation of the vein", "Non-vesicant fluid leaking into surrounding tissue", "A vesicant drug leaking and causing tissue damage", "Air entering the vein"],
+    correct: 1,
+    rationale: "Infiltration = non-vesicant fluid into tissue (cool, pale, swollen). Extravasation = vesicant drug causing potential tissue necrosis."
+  },
+  {
+    category: "IV Therapy",
+    question: "Normal saline (0.9% NaCl) is classified as:",
+    options: ["Hypotonic", "Isotonic", "Hypertonic", "Colloid"],
+    correct: 1,
+    rationale: "0.9% NaCl is isotonic (osmolarity ~308 mOsm/L), similar to plasma. Used for volume replacement and most medication dilution."
+  },
+  {
+    category: "IV Therapy",
+    question: "Which fluid is hypertonic?",
+    options: ["0.45% NaCl", "0.9% NaCl", "3% NaCl", "Lactated Ringer's"],
+    correct: 2,
+    rationale: "3% NaCl is hypertonic, used for severe hyponatremia or cerebral edema. Must be given via central line slowly with frequent Na monitoring."
+  },
+  {
+    category: "IV Therapy",
+    question: "Which solution is hypotonic?",
+    options: ["0.9% NaCl", "0.45% NaCl", "D5NS", "3% NaCl"],
+    correct: 1,
+    rationale: "0.45% NaCl (½ NS) is hypotonic. It pulls water into cells — avoid in increased ICP, burns, or hypovolemia."
+  },
+  {
+    category: "IV Therapy",
+    question: "The first action when air embolism is suspected during IV therapy is:",
+    options: ["Continue infusion at slower rate", "Position patient in left lateral Trendelenburg and clamp the line", "Apply heat to the site", "Document and observe"],
+    correct: 1,
+    rationale: "Air embolism: position left side down with head lower (left lateral Trendelenburg) to trap air in right atrium, clamp line, give 100% O₂, notify MD immediately."
+  },
+  {
+    category: "IV Therapy",
+    question: "A vesicant is a medication that:",
+    options: ["Causes nausea", "Causes tissue necrosis if it extravasates", "Must be given orally", "Is always given as a bolus"],
+    correct: 1,
+    rationale: "Vesicants (e.g., dopamine, norepinephrine, vasopressin, chemotherapy agents) cause severe tissue damage if they leak. Best given via central line."
+  },
+  {
+    category: "IV Therapy",
+    question: "Lactated Ringer's solution is contraindicated in patients with:",
+    options: ["Mild dehydration", "Severe liver disease", "Hypotension", "Burns"],
+    correct: 1,
+    rationale: "LR contains lactate, metabolized by the liver to bicarbonate. Severe liver failure impairs this. Also use cautiously in hyperkalemia (contains K⁺)."
+  },
+  {
+    category: "IV Therapy",
+    question: "When changing IV tubing for continuous primary infusion, the standard interval is typically:",
+    options: ["Every 24 hours", "Every 96 hours (per CDC) or per facility policy", "Every 7 days", "Only when contaminated"],
+    correct: 1,
+    rationale: "CDC recommends primary continuous tubing change no more frequently than 96 hours, but at least every 7 days. Blood/lipid/propofol tubing is changed more often (q12–24h)."
+  },
+  {
+    category: "IV Therapy",
+    question: "Signs of fluid volume overload from IV therapy include:",
+    options: ["Dry mucous membranes and tachycardia", "Crackles in lungs, JVD, dyspnea, edema", "Hypotension and weak pulses", "Decreased urine output and thirst"],
+    correct: 1,
+    rationale: "Overload: pulmonary crackles, JVD, dyspnea, peripheral edema, weight gain, hypertension, bounding pulse. Slow/stop infusion, raise HOB, give O₂ and possibly diuretics."
+  },
+  {
+    category: "IV Therapy",
+    question: "A central venous catheter has the tip ideally located in:",
+    options: ["The right atrium", "The superior vena cava just above the right atrium", "The pulmonary artery", "The aorta"],
+    correct: 1,
+    rationale: "CVC tip should sit in the lower SVC at the cavoatrial junction. Tip in right atrium increases arrhythmia and perforation risk."
+  },
+  {
+    category: "IV Therapy",
+    question: "The most serious complication of central line insertion is:",
+    options: ["Bruising", "Pneumothorax", "Mild bleeding", "Cellulitis"],
+    correct: 1,
+    rationale: "Pneumothorax is a serious immediate risk during subclavian/IJ insertion. Always confirm placement with chest X-ray before use."
+  },
+  {
+    category: "IV Therapy",
+    question: "Before administering IV medication, the nurse must always check:",
+    options: ["The patient's favorite food", "The 5 (or more) Rights of medication administration", "The IV bag color only", "Only the doctor's signature"],
+    correct: 1,
+    rationale: "The Rights: Right patient, drug, dose, route, time (and increasingly: documentation, reason, response, education, refuse)."
+  },
+  {
+    category: "IV Therapy",
+    question: "The recommended angle for inserting a peripheral IV catheter is:",
+    options: ["5–10°", "10–30°", "45°", "90°"],
+    correct: 1,
+    rationale: "Insert at 10–30° to skin until flashback, then lower the angle and advance the catheter while withdrawing the needle."
+  },
+  {
+    category: "IV Therapy",
+    question: "Which IV site should generally be avoided?",
+    options: ["Forearm", "Dorsum of the hand", "Antecubital fossa for long-term continuous infusion", "Cephalic vein"],
+    correct: 2,
+    rationale: "Antecubital fossa is fine for short-term/emergency access but should be avoided for prolonged infusions because flexion occludes flow and increases phlebitis."
+  },
+  {
+    category: "IV Therapy",
+    question: "The first action when suspecting catheter-related bloodstream infection (CRBSI) is:",
+    options: ["Continue infusion and monitor", "Notify provider; obtain blood cultures (peripheral and from line) before antibiotics", "Pull line immediately without orders", "Increase fluid rate"],
+    correct: 1,
+    rationale: "Notify provider, obtain paired blood cultures (peripheral + line) before starting antibiotics. The line may need to be removed and tip cultured."
+  },
+  {
+    category: "IV Therapy",
+    question: "TPN (total parenteral nutrition) should be administered through:",
+    options: ["Any peripheral IV", "A central venous catheter", "A subcutaneous needle", "An IM injection"],
+    correct: 1,
+    rationale: "TPN's high osmolarity (>900 mOsm/L) damages peripheral veins; it must be given via a central line (PICC or CVC)."
+  },
+  {
+    category: "IV Therapy",
+    question: "If TPN bag runs out before the next bag is available, hang:",
+    options: ["Plain saline", "D10W (dextrose 10%) at the same rate", "Lactated Ringer's", "Stop the infusion entirely with no replacement"],
+    correct: 1,
+    rationale: "Sudden TPN cessation can cause rebound hypoglycemia. Hang D10W at the same rate to prevent it, until the new TPN bag arrives."
+  },
+  {
+    category: "IV Therapy",
+    question: "Which complication is associated with rapid administration of IV vancomycin?",
+    options: ["Hyperkalemia", "Red Man syndrome (flushing, rash, hypotension)", "Hypoglycemia", "Hypothermia"],
+    correct: 1,
+    rationale: "Red Man syndrome: histamine-mediated reaction from rapid vancomycin infusion. Prevent by infusing over at least 60 minutes (longer for bigger doses)."
+  },
+  {
+    category: "IV Therapy",
+    question: "The most reliable way to verify peripheral IV patency is:",
+    options: ["Look at the dressing", "Flush gently with saline and observe for ease of flow + no swelling/pain", "Ask the patient if it hurts", "Check the IV pump rate"],
+    correct: 1,
+    rationale: "Flush with 5–10 mL normal saline. Easy flush, blood return, no swelling/pain → patent. Resistance, swelling, or pain → infiltrated/blocked."
+  },
+  {
+    category: "IV Therapy",
+    question: "When administering IV medication via Y-site, the nurse must first verify:",
+    options: ["The patient's height", "Compatibility of the medication with the running fluid", "The room temperature", "The bag's color"],
+    correct: 1,
+    rationale: "Always check IV drug compatibility with the primary infusion. Incompatibility causes precipitation, inactivation, or harm. Use a compatibility chart."
+  },
+  {
+    category: "IV Therapy",
+    question: "Vasopressors (e.g., norepinephrine) should ideally be infused via:",
+    options: ["Any peripheral vein", "A central venous catheter", "A subcutaneous line", "Through TPN line"],
+    correct: 1,
+    rationale: "Vasopressors are vesicants — extravasation causes severe tissue necrosis. A central line is preferred. If peripheral is needed temporarily, monitor very closely."
+  },
+  {
+    category: "IV Therapy",
+    question: "When extravasation of a vesicant is suspected, the FIRST nursing action is:",
+    options: ["Pull the catheter immediately", "Stop the infusion but leave the catheter in place to attempt aspiration", "Apply heat", "Continue at slower rate"],
+    correct: 1,
+    rationale: "Stop infusion, leave catheter in to aspirate residual drug and possibly instill antidote, then remove. Apply cold/warm based on the specific drug protocol."
+  },
+  {
+    category: "IV Therapy",
+    question: "How often should peripheral IV sites be assessed?",
+    options: ["Once per shift", "At least every 1–2 hours (per facility policy)", "Only when patient complains", "Once daily"],
+    correct: 1,
+    rationale: "Peripheral IVs should be assessed at least hourly (especially with vesicants/high-risk infusions) for patency, infiltration, phlebitis, and dressing integrity."
+  }
+];
+
+const state = {
+  answered: new Set(),
+  correctSet: new Set(),
+  incorrectSet: new Set(),
+  filter: 'all'
+};
+
+const letters = ['A', 'B', 'C', 'D'];
+
+function renderQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  questions.forEach((q, qIdx) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question';
+    qDiv.id = `q${qIdx}`;
+    qDiv.dataset.category = q.category;
+
+    const optionsHTML = q.options.map((opt, oIdx) => `
+      <button class="option" data-q="${qIdx}" data-o="${oIdx}" onclick="selectAnswer(${qIdx}, ${oIdx})">
+        <span class="option-letter">${letters[oIdx]}</span>
+        <span>${opt}</span>
+      </button>
+    `).join('');
+
+    qDiv.innerHTML = `
+      <div class="q-header">
+        <div class="q-num">${qIdx + 1}</div>
+        <span class="q-category">${q.category}</span>
+      </div>
+      <div class="q-text">${q.question}</div>
+      <div class="options">${optionsHTML}</div>
+      <div class="rationale" id="rationale-${qIdx}">
+        <div class="rationale-label">💡 Rationale</div>
+        <div class="rationale-text">${q.rationale}</div>
+      </div>
+    `;
+    container.appendChild(qDiv);
+  });
+  applyFilter();
+}
+
+function selectAnswer(qIdx, oIdx) {
+  if (state.answered.has(qIdx)) return;
+
+  const q = questions[qIdx];
+  const buttons = document.querySelectorAll(`.option[data-q="${qIdx}"]`);
+
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.correct) {
+      btn.classList.add(idx === oIdx ? 'correct' : 'disabled-correct');
+    } else if (idx === oIdx) {
+      btn.classList.add('incorrect');
+    }
+  });
+
+  document.getElementById(`rationale-${qIdx}`).classList.add('show');
+
+  state.answered.add(qIdx);
+  if (oIdx === q.correct) state.correctSet.add(qIdx);
+  else state.incorrectSet.add(qIdx);
+
+  updateStats();
+}
+
+function updateStats() {
+  // Count only visible (filtered) questions for stats
+  const visibleIndexes = questions
+    .map((q, i) => ({ q, i }))
+    .filter(({ q }) => state.filter === 'all' || q.category === state.filter)
+    .map(({ i }) => i);
+
+  const total = visibleIndexes.length;
+  const answered = visibleIndexes.filter(i => state.answered.has(i)).length;
+  const correct = visibleIndexes.filter(i => state.correctSet.has(i)).length;
+  const incorrect = visibleIndexes.filter(i => state.incorrectSet.has(i)).length;
+
+  document.getElementById('answeredCount').textContent = answered;
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('incorrectCount').textContent = incorrect;
+  document.getElementById('totalDisplay').textContent = total;
+  document.getElementById('progressFill').style.width = `${(answered / total) * 100}%`;
+  document.getElementById('scorePct').textContent = answered > 0
+    ? `${Math.round((correct / answered) * 100)}%`
+    : '—';
+}
+
+function filterQuestions(category) {
+  state.filter = category;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.filter === category);
+  });
+  applyFilter();
+  updateStats();
+  scrollToTop();
+}
+
+function applyFilter() {
+  const cards = document.querySelectorAll('.question');
+  let anyVisible = false;
+  cards.forEach(card => {
+    const show = state.filter === 'all' || card.dataset.category === state.filter;
+    card.classList.toggle('hidden', !show);
+    if (show) anyVisible = true;
+  });
+  document.getElementById('emptyState').classList.toggle('show', !anyVisible);
+}
+
+function resetExam() {
+  if (!confirm('Reset all answers and start over?')) return;
+  state.answered.clear();
+  state.correctSet.clear();
+  state.incorrectSet.clear();
+  renderQuestions();
+  updateStats();
+  scrollToTop();
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderQuestions();
+updateStats();
+</script>
+</body>
+</html>
